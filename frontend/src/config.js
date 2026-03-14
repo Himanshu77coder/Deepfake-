@@ -1,5 +1,6 @@
 const normalizeApiBaseUrl = (value) => value.replace(/\/+$/, '');
 
+// Default to localhost for local dev and the HF backend when deployed.
 const getDefaultApiBaseUrl = () => {
   if (typeof window !== 'undefined' && /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)) {
     return 'http://localhost:8000';
