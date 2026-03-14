@@ -1,0 +1,418 @@
+/* ============================================================================
+   DEEPFAKE DETECTOR - CYBER SECURITY THEME
+   Advanced CSS Animations and Styles
+   ============================================================================ */
+
+/* Grid Movement Animation */
+
+@keyframes gridMove {
+  0% { 
+    transform: translate(0, 0); 
+  }
+  100% { 
+    transform: translate(50px, 50px); 
+  }
+}
+
+/* Floating Particles Animation */
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+    opacity: 0.3; 
+  }
+  50% { 
+    transform: translateY(-100px); 
+    opacity: 0.8; 
+  }
+}
+
+/* Vertical Scanning Line */
+@keyframes scanVertical {
+  0% { 
+    top: 0; 
+    opacity: 0; 
+  }
+  50% { 
+    opacity: 1; 
+  }
+  100% { 
+    top: 100%; 
+    opacity: 0; 
+  }
+}
+
+/* Horizontal Scanning Line */
+@keyframes scanHorizontal {
+  0% { 
+    left: 0; 
+    opacity: 0; 
+  }
+  50% { 
+    opacity: 1; 
+  }
+  100% { 
+    left: 100%; 
+    opacity: 0; 
+  }
+}
+
+/* Shimmer Effect */
+@keyframes shimmer {
+  0% { 
+    transform: translateX(-100%); 
+  }
+  100% { 
+    transform: translateX(100%); 
+  }
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1; 
+  }
+  50% { 
+    opacity: 0.5; 
+  }
+}
+
+/* Scan Progress Animation */
+@keyframes scanProgress {
+  0% { 
+    transform: translateX(-100%); 
+  }
+  100% { 
+    transform: translateX(100%); 
+  }
+}
+
+/* Scroll Up Animation (Hex Data) */
+@keyframes scrollUp {
+  0% { 
+    transform: translateY(0); 
+  }
+  100% { 
+    transform: translateY(-50%); 
+  }
+}
+
+/* Grid Pulse Animation */
+@keyframes gridPulse {
+  0%, 100% { 
+    opacity: 0.1; 
+  }
+  50% { 
+    opacity: 0.3; 
+  }
+}
+
+/* Spin Animation */
+@keyframes spin {
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+/* Slow Spin Animation */
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+/* Shimmer Animation Class */
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Ping Animation (for radar effect) */
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Pulse Animation (for icons) */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ============================================================================
+   CUSTOM UTILITY CLASSES
+   ============================================================================ */
+
+/* Backdrop Blur */
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(16px);
+}
+
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
+
+/* Text Gradient */
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0e27;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00ffff;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00cccc;
+}
+
+/* Selection Color */
+::selection {
+  background-color: #00ffff;
+  color: #0a0e27;
+}
+
+::-moz-selection {
+  background-color: #00ffff;
+  color: #0a0e27;
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  /* Reduce animation intensity on mobile */
+  .animate-spin-slow {
+    animation-duration: 5s;
+  }
+  
+  /* Smaller particles on mobile */
+  .absolute.w-1.h-1 {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .animate-spin-slow,
+  .animate-shimmer,
+  .animate-ping,
+  .animate-pulse {
+    animation: none !important;
+  }
+}
+
+/* Focus Styles for Keyboard Navigation */
+button:focus-visible,
+input:focus-visible,
+label:focus-visible {
+  outline: 2px solid #00ffff;
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================================================ */
+
+/* GPU Acceleration for Animations */
+.animate-spin-slow,
+.animate-shimmer,
+.animate-ping,
+.animate-pulse {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimize Rendering */
+.backdrop-blur-sm,
+.backdrop-blur-lg,
+.backdrop-blur-xl {
+  will-change: backdrop-filter;
+}
+
+/* ============================================================================
+   ADDITIONAL CYBER EFFECTS
+   ============================================================================ */
+
+/* Glitch Effect (Optional - can be applied to text) */
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.glitch {
+  animation: glitch 0.3s infinite;
+}
+
+/* Neon Glow Effect */
+.neon-glow {
+  text-shadow: 
+    0 0 5px #00ffff,
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 40px #00ffff;
+}
+
+/* Box Shadow Glow */
+.box-glow-cyan {
+  box-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.3),
+    0 0 20px rgba(0, 255, 255, 0.2),
+    0 0 30px rgba(0, 255, 255, 0.1);
+}
+
+.box-glow-blue {
+  box-shadow: 
+    0 0 10px rgba(59, 130, 246, 0.3),
+    0 0 20px rgba(59, 130, 246, 0.2),
+    0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+.box-glow-purple {
+  box-shadow: 
+    0 0 10px rgba(147, 51, 234, 0.3),
+    0 0 20px rgba(147, 51, 234, 0.2),
+    0 0 30px rgba(147, 51, 234, 0.1);
+}
+
+/* Scanline Effect */
+.scanlines {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(0, 255, 255, 0.05) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Terminal Cursor Blink */
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink::after {
+  content: '▋';
+  animation: blink 1s infinite;
+}
+
+/* Data Matrix Effect */
+@keyframes matrix {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.matrix-effect {
+  animation: matrix 20s linear infinite;
+}
+
+/* ============================================================================
+   PRINT STYLES (for reports)
+   ============================================================================ */
+
+@media print {
+  /* Hide animations and effects when printing */
+  .animate-spin-slow,
+  .animate-shimmer,
+  .animate-ping,
+  .animate-pulse {
+    animation: none !important;
+  }
+  
+  /* Ensure text is readable */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Hide decorative elements */
+  .absolute.inset-0 {
+    display: none !important;
+  }
+}
+
+/* ============================================================================
+   END OF STYLES
+   ============================================================================ */
