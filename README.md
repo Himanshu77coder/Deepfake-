@@ -1,304 +1,217 @@
-🧠 Advanced Deepfake Detection Backend
+# Media Authenticity Analyzer
 
-Deployment for this repo is now prepared for:
+A full-stack web application for analyzing uploaded images, GIFs, and videos and classifying them as authentic, edited, or AI-generated.
 
-- GitHub Pages frontend
-- Render backend
+This project combines a FastAPI backend, a React frontend, neural-network inference, and classical computer-vision heuristics to provide an explanation-first media authenticity workflow. It is designed for demos, academic work, and portfolio projects rather than as a certified forensic product.
 
-See `DEPLOYMENT.md` for the exact GitHub + Render steps.
+## Live Deployment
 
-A production-grade AI Deepfake Detection API built using FastAPI, PyTorch, and FaceForensics++ inspired ensemble models. This backend analyzes images, videos, and GIFs using deep learning and computer vision forensic techniques to detect manipulated or synthetic media.
+- Frontend: [https://himanshu77coder.github.io/Deepfake-/](https://himanshu77coder.github.io/Deepfake-/)
+- Backend API: [https://himanshu07coder-deepfake-backend-api.hf.space](https://himanshu07coder-deepfake-backend-api.hf.space)
+- API docs: [https://himanshu07coder-deepfake-backend-api.hf.space/docs](https://himanshu07coder-deepfake-backend-api.hf.space/docs)
+- Health check: [https://himanshu07coder-deepfake-backend-api.hf.space/health](https://himanshu07coder-deepfake-backend-api.hf.space/health)
 
-🚀 Features
+## What This Project Does
 
-🤖 AI Model Ensemble
+The application accepts uploaded media and returns a classification with supporting signals and summary text. Current result categories are:
 
-Xception (Primary FaceForensics++ model)
+| Label | Meaning |
+| --- | --- |
+| `AUTHENTIC` | Likely original media with no strong manipulation signal |
+| `EDITED_ORIGINAL` | Likely real media that has been altered or edited |
+| `AI_GENERATED` | Likely synthetic or AI-generated media |
 
-EfficientNet-B4
+The UI presents:
 
-MesoNet-4
+- media preview before upload
+- backend connection status
+- manipulation and authenticity scoring
+- category-aware result styling
+- explanation text under "Why this result"
+- per-frame analysis for GIFs when available
 
-ResNet50
+## Key Features
 
-Weighted ensemble for improved accuracy
+- Image, GIF, and video upload support
+- FastAPI backend with `POST /api/analyze`
+- React frontend designed for both localhost and deployed use
+- Face-aware ensemble inference for detected faces
+- Frequency-domain and lighting-consistency checks
+- Temporal checks for videos and animated GIFs
+- Cleaner output labels than a binary "threat detected" workflow
+- Environment-based configuration for frontend and backend
+- Live deployment using GitHub Pages and Hugging Face Spaces
 
-🔬 Forensic Analysis
+## High-Level Pipeline
 
-Frequency domain analysis (DCT based)
+1. The frontend uploads a selected file to the backend.
+2. The backend validates file type and size.
+3. Media is analyzed using a mix of:
+   - face detection
+   - ensemble model scoring
+   - frequency-domain checks
+   - lighting and artifact checks
+   - temporal heuristics for videos and GIFs
+4. The backend combines signals into a final classification and explanation payload.
+5. The frontend renders the result with scores, reasons, and category-specific styling.
 
-Facial detection & structural analysis
+## Tech Stack
 
-Lighting and shadow consistency analysis
+### Frontend
 
-Temporal motion consistency for videos and GIFs
+- React
+- JavaScript
+- CSS
+- Lucide React icons
 
-📦 Media Support
+### Backend
 
-Images (JPEG, PNG, WEBP, GIF)
+- FastAPI
+- Uvicorn
+- PyTorch
+- OpenCV
+- facenet-pytorch
+- timm
+- Pillow / ImageIO / NumPy
 
-Videos (MP4, MOV, AVI)
+### Hosting
 
-Animated GIFs
+- GitHub Pages for the frontend
+- Hugging Face Spaces for the backend
 
-⚙️ Production Capabilities
+## Repository Structure
 
-GPU acceleration (CUDA support)
+```text
+Deepfake-main/
+|-- backend/
+|   |-- main.py
+|   |-- requirements.txt
+|   |-- .env.example
+|   `-- models/
+|       `-- huggingface_detector.py
+|-- frontend/
+|   |-- src/
+|   |   |-- App.js
+|   |   `-- config.js
+|   `-- .env.example
+|-- HANDOFF.md
+|-- DEPLOYMENT.md
+`-- README.md
+```
 
-HuggingFace fallback model support
+## Local Development
 
-REST API with FastAPI
+### 1. Clone the repository
 
-Frontend compatible response format
+```powershell
+git clone https://github.com/Himanshu77coder/Deepfake-.git
+cd Deepfake-
+```
 
-🏗️ System Architecture
+### 2. Start the backend
 
-Client / Frontend
-        │
-        ▼
-FastAPI Backend
-        │
-        ▼
-Media Processing Layer
-        │
-        ▼
-Deep Learning Ensemble + CV Analysis
-        │
-        ▼
-Deepfake Risk Score + Metadata Response
-
-📂 Project Structure
-
-project-root/
-│
-├── main.py                  # Main backend server
-├── models/                  # Optional external ML models
-├── requirements.txt         # Dependencies
-├── README.md
-
-🧪 Detection Pipeline
-
-1. Face Detection
-
-MTCNN Deep Learning Face Detector
-
-Haar Cascade fallback detection
-
-2. Neural Network Inference
-
-Media is analyzed using multiple CNN models trained on deepfake datasets.
-
-3. Traditional CV Forensics
-
-Compression artifact detection
-
-Frequency domain anomaly detection
-
-Lighting inconsistency detection
-
-Motion irregularity detection
-
-4. Risk Scoring Engine
-
-Combines:
-
-Model predictions
-
-Forensic analysis
-
-Heuristic adjustments
-
-📦 Installation
-
-🔹 Clone Repository
-
-git clone https://github.com/your-username/deepfake-detection-backend.git
-cd deepfake-detection-backend
-
-🔹 Environment Configuration
-
-The project now supports env-based deployment config so you do not have to edit code for every new domain or server.
-
-Backend:
-
-copy backend/.env.example backend/.env
-
-Frontend:
-
-copy frontend/.env.example frontend/.env
-
-Important variables:
-
-- `backend/.env`
-  - `APP_HOST` and `APP_PORT` control the FastAPI server bind address
-  - `PUBLIC_BASE_URL` controls the URLs shown in backend logs and health metadata
-  - `CORS_ORIGINS` is a comma-separated list of frontend domains allowed to call the API
-  - `MAX_UPLOAD_SIZE_MB` controls the upload limit
-- `frontend/.env`
-  - `REACT_APP_API_BASE_URL` points the website to the deployed backend
-  - `REACT_APP_MAX_UPLOAD_MB` keeps the UI upload limit aligned with the backend
-
-🔹 Create Virtual Environment
-
-python -m venv venv
-source venv/bin/activate        # Linux / Mac
-venv\Scripts\activate           # Windows
-
-🔹 Install Dependencies
-
-pip install fastapi uvicorn python-multipart
-pip install opencv-python numpy pillow imageio
-pip install torch torchvision timm facenet-pytorch transformers
-
-▶️ Running the Server
-
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install --upgrade pip
+pip install -r requirements.txt
 python main.py
+```
 
-Server will start at:
+Backend default URLs:
 
-http://localhost:8000
+- `http://localhost:8000`
+- `http://localhost:8000/docs`
+- `http://localhost:8000/health`
 
-API Documentation:
+### 3. Start the frontend
 
-http://localhost:8000/docs
+Open a second terminal:
 
-🌍 Deployment Notes
+```powershell
+cd frontend
+npm install
+npm start
+```
 
-- If you deploy the frontend, set `REACT_APP_API_BASE_URL` to your live backend URL before building.
-- If you deploy the backend, set `CORS_ORIGINS` to include your live frontend domain.
-- The backend processes images and GIFs in memory.
-- Videos are written to a temporary file during analysis and then deleted automatically.
+Frontend default URL:
 
-📡 API Endpoints
+- `http://localhost:3000`
 
-🏠 Root Endpoint
+## Configuration
 
-GET /
+Example environment files are included:
 
-Returns API status and model information.
+- `backend/.env.example`
+- `frontend/.env.example`
 
-❤️ Health Check
+### Backend variables
 
-GET /health
+- `APP_HOST`
+- `APP_PORT`
+- `PUBLIC_BASE_URL`
+- `CORS_ORIGINS`
+- `MAX_UPLOAD_SIZE_MB`
+- `LOG_LEVEL`
 
-Returns system health and model readiness.
+### Frontend variables
 
-🔍 Analyze Media
+- `REACT_APP_API_BASE_URL`
+- `REACT_APP_MAX_UPLOAD_MB`
 
-POST /api/analyze
+Note: the frontend is configured to use `http://localhost:8000` during local development and the deployed Hugging Face backend when running from the live site.
 
-Upload image, video, or GIF for deepfake detection.
+## API Summary
 
-🧠 Model Information
+### `GET /health`
 
-GET /api/models/info
+Returns backend health and model readiness information.
 
-Returns loaded model details and weights.
+### `GET /docs`
 
-📊 Statistics
+Interactive FastAPI Swagger documentation.
 
-GET /api/stats
+### `POST /api/analyze`
 
-Returns usage and detection statistics.
+Uploads an image, GIF, or video and returns analysis results.
 
-📤 Example Request
+Example request:
 
+```bash
 curl -X POST "http://localhost:8000/api/analyze" \
-     -F "file=@sample.jpg"
+  -F "file=@sample.jpg"
+```
 
-📥 Example Response
+## Deployment Overview
 
-{
-  "is_deepfake": true,
-  "deepfake_score": 78.5,
-  "confidence": 91.2,
-  "risk_level": "HIGH"
-}
+Current live stack:
 
-⚡ Hardware Requirements
+- Frontend: GitHub Pages
+- Backend: Hugging Face Spaces
 
-Minimum
+Important deployment rules:
 
-CPU supported
+- Do not leave the frontend pointed at localhost for production.
+- The backend must allow your frontend origin in `CORS_ORIGINS`.
+- Free hosting may introduce cold-start delays after inactivity.
 
-8GB RAM
+## Current Limitations
 
-Recommended
+- This is still partly heuristic-driven and should not be treated as a final forensic authority.
+- Face-centric media is handled more reliably than non-face AI artwork.
+- Edited-image detection is improved, but not perfect for every real-world edit.
+- Free-tier hosting may be slower than local or GPU-backed deployment.
+- There is no authentication, rate limiting, or user history layer yet.
 
-NVIDIA GPU with CUDA
+## Recommended Next Improvements
 
-16GB RAM
+- Add stronger AI-image detection for non-face synthetic content
+- Split the backend into smaller modules
+- Add automated tests for authentic, edited, and AI-generated samples
+- Add request logging, rate limiting, and monitoring
+- Add downloadable reports and optional upload history
 
-📊 Accuracy
+## License
 
-Models Loaded
-
-Estimated Accuracy
-
-1 Model
-
-~87%
-
-2 Models
-
-~90%
-
-3 Models
-
-~92%
-
-4 Models
-
-~95%
-
-🔄 Fallback Strategy
-
-If primary models fail:
-
-HuggingFace deepfake detector
-
-Traditional computer vision heuristics
-
-🔒 Security Notes
-
-File upload size limited to 100MB
-
-MIME type validation enabled
-
-SSL verification disabled only for model download compatibility
-
-🧩 Technologies Used
-
-FastAPI
-
-PyTorch
-
-OpenCV
-
-FaceForensics++ concepts
-
-MTCNN Face Detection
-
-HuggingFace Transformers
-
-NumPy & ImageIO
-
-🛠️ Future Improvements
-
-Real-time streaming detection
-
-Batch inference optimization
-
-Docker containerization
-
-Cloud deployment support
-
-Model retraining pipeline
-
-👨‍💻 Author
-
-Deepfake Detection Backend Project
-
-📜 License
-
-This project is intended for educational and research purposes.
+This project is intended for educational and research use.
