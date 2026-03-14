@@ -540,17 +540,19 @@ def derive_signal_scores(
         + max(0.0, 78.0 - lighting_consistency) * 0.45
         + min(high_frequency, 55.0) * 0.18
         + (100.0 - compression_consistency) * 0.35
-        + max(0.0, local_variance - 30.0) * 0.60
-        + max(0.0, edge_discontinuity - 4.0) * 0.55
+        + max(0.0, local_variance - 22.0) * 0.72
+        + max(0.0, edge_discontinuity - 3.0) * 0.65
         + temporal_instability * 0.18
     )
 
     if face_count == 0:
         edited_original += min(
-            14.0,
-            max(0.0, local_variance - 25.0) * 0.35
-            + max(0.0, edge_discontinuity - 4.0) * 0.30
+            18.0,
+            max(0.0, local_variance - 24.0) * 0.65
+            + max(0.0, edge_discontinuity - 2.5) * 0.45
         )
+        if local_variance >= 34.0 and (hf_fake is None or hf_fake < 35.0):
+            edited_original += min(10.0, (local_variance - 33.0) * 0.90)
 
     return {
         "ai_generated": clamp_score(ai_generated),
@@ -580,8 +582,8 @@ def finalize_classification(signal_scores: Dict[str, float]) -> Dict[str, Any]:
         risk_level = "HIGH" if ai_score >= 80.0 else "MEDIUM"
         summary = "Likely AI-generated or fully synthetic content."
     elif (
-        (edit_score >= 46.0 and edit_score >= ai_score - 5.0)
-        or (edit_score >= 24.0 and edit_score >= ai_score + 10.0)
+        (edit_score >= 42.0 and edit_score >= ai_score - 6.0)
+        or (edit_score >= 18.0 and edit_score >= ai_score + 6.0)
     ):
         manipulation_type = "EDITED_ORIGINAL"
         manipulation_score = clamp_score(max(edit_score, ai_score * 0.85))
