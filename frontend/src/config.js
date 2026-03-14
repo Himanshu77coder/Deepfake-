@@ -1,6 +1,14 @@
 const normalizeApiBaseUrl = (value) => value.replace(/\/+$/, '');
 
-const defaultApiBaseUrl = 'http://localhost:8000';
+const getDefaultApiBaseUrl = () => {
+  if (typeof window !== 'undefined' && /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)) {
+    return 'http://localhost:8000';
+  }
+
+  return 'https://himanshu07coder-deepfake-backend-api.hf.space';
+};
+
+const defaultApiBaseUrl = getDefaultApiBaseUrl();
 const rawApiBaseUrl = process.env.REACT_APP_API_BASE_URL || defaultApiBaseUrl;
 const rawMaxUploadMb = Number(process.env.REACT_APP_MAX_UPLOAD_MB || '100');
 

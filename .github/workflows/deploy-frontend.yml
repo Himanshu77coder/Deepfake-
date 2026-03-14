@@ -38,13 +38,6 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Validate frontend API URL
-        run: |
-          if [ -z "${{ vars.REACT_APP_API_BASE_URL }}" ]; then
-            echo "Set repository variable REACT_APP_API_BASE_URL to your Render backend URL before deploying."
-            exit 1
-          fi
-
       - name: Install dependencies
         run: npm ci
 
