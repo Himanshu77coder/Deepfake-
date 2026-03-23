@@ -1,8 +1,24 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+beforeEach(() => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({ status: 'ok' })
+    })
+  );
+});
+
+afterEach(() => {
+  jest.resetAllMocks();
+});
+
+test('renders the redesigned detector hero', async () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(
+    screen.getByText(/spot ai-generated or edited media before it spreads/i)
+  ).toBeInTheDocument();
+  expect(screen.getByText(/drop media into the review desk/i)).toBeInTheDocument();
+  expect((await screen.findAllByText(/api online/i)).length).toBeGreaterThan(0);
 });
