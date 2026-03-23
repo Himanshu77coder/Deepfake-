@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -19,11 +19,16 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #081018;
-  color: #f8f0e4;
+  background: #06111c;
+  color: #eef5ff;
   font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(125, 220, 255, 0.28);
+  color: #eef5ff;
 }
 
 button,

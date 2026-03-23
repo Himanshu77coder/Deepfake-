@@ -15,8 +15,7 @@ import {
   Scan,
   Shield,
   Upload,
-  XCircle,
-  Zap
+  XCircle
 } from 'lucide-react';
 import './App.css';
 import { API_BASE_URL, ANALYZE_ENDPOINT, HEALTH_ENDPOINT, MAX_UPLOAD_MB } from './config';
@@ -33,41 +32,41 @@ const ANALYSIS_STEPS = [
 const CAPABILITY_CARDS = [
   {
     icon: Cpu,
-    title: 'Ensemble verdicts',
-    description: 'Multiple learned detectors vote together before a label is shown.'
+    title: 'Ensemble models',
+    description: 'Multiple detector outputs are combined before the final verdict.'
   },
   {
     icon: Activity,
-    title: 'Forensic checks',
-    description: 'Frequency, lighting, and artifact analysis help catch hidden edits.'
+    title: 'Artifact analysis',
+    description: 'Texture, lighting, and compression cues stay visible in the report.'
   },
   {
-    icon: Database,
-    title: 'Mixed media support',
-    description: 'Run the same workflow against images, animated GIFs, and short videos.'
+    icon: Film,
+    title: 'Frame scoring',
+    description: 'Animated uploads can return frame-level manipulation signals.'
   },
   {
-    icon: Zap,
+    icon: BarChart3,
     title: 'Readable output',
-    description: 'You get a compact verdict, supporting reasons, and model-level evidence.'
+    description: 'Confidence, risk, and reasons stay grouped in one result view.'
   }
 ];
 
 const WORKFLOW_STEPS = [
   {
     step: '01',
-    title: 'Upload once',
-    description: 'Choose an image, GIF, or video clip from your device and preview it before scanning.'
+    title: 'Select media',
+    description: 'Choose an image, GIF, or short video and confirm the preview.'
   },
   {
     step: '02',
-    title: 'Wait for the checks',
-    description: 'The app runs model signals and media forensics side by side while the progress panel updates.'
+    title: 'Run the scan',
+    description: 'Model and forensic checks are processed together.'
   },
   {
     step: '03',
-    title: 'Read the verdict',
-    description: 'Review the classification, risk level, reasons, and optional frame-by-frame breakdown in one place.'
+    title: 'Read the result',
+    description: 'Review the verdict, confidence, and supporting notes.'
   }
 ];
 
@@ -106,19 +105,19 @@ const getStatusMeta = (status) => {
     case 'connected':
       return {
         label: 'API online',
-        detail: 'Ready for secure analysis',
+        detail: 'Ready for analysis',
         tone: 'connected'
       };
     case 'error':
       return {
         label: 'Backend offline',
-        detail: 'Retry or start the API server',
+        detail: 'Start the API server or retry the connection',
         tone: 'error'
       };
     default:
       return {
         label: 'Checking backend',
-        detail: 'Verifying connection before uploads',
+        detail: 'Verifying the API before uploads',
         tone: 'checking'
       };
   }
@@ -155,7 +154,7 @@ const getResultTone = (type) => {
       return {
         key: 'ai',
         title: 'High manipulation risk',
-        narrative: 'Strong synthetic patterns were detected across the uploaded media.',
+        narrative: 'Strong synthetic patterns were detected in the uploaded media.',
         primaryLabel: 'Manipulation score',
         secondaryLabel: 'Authenticity score',
         meterLabel: 'Synthetic likelihood',
@@ -166,7 +165,7 @@ const getResultTone = (type) => {
       return {
         key: 'edited',
         title: 'Edited original detected',
-        narrative: 'The media appears rooted in a real source but carries clear editing signals.',
+        narrative: 'The media appears rooted in a real source but carries editing signals.',
         primaryLabel: 'Edit score',
         secondaryLabel: 'Authenticity score',
         meterLabel: 'Edit likelihood',
@@ -177,7 +176,7 @@ const getResultTone = (type) => {
       return {
         key: 'authentic',
         title: 'Likely authentic media',
-        narrative: 'The strongest signals currently lean toward authentic capture with lower manipulation risk.',
+        narrative: 'The strongest signals currently lean toward authentic capture.',
         primaryLabel: 'Authenticity score',
         secondaryLabel: 'Manipulation score',
         meterLabel: 'Authenticity confidence',
@@ -386,6 +385,7 @@ export default function DeepfakeDetector() {
 
   const statusMeta = getStatusMeta(backendStatus);
   const fileMeta = getFileMeta(file);
+  const FileMetaIcon = fileMeta?.icon ?? ImageIcon;
   const resultType =
     result?.manipulation_type || (result?.is_deepfake ? 'AI_GENERATED' : 'AUTHENTIC');
   const tone = getResultTone(resultType);
@@ -399,12 +399,37 @@ export default function DeepfakeDetector() {
   const signalEntries = Object.entries(result?.signal_scores ?? {}).slice(0, 6);
   const detailEntries = Object.entries(result?.analysis_details ?? {}).slice(0, 8);
   const networkEntries = Object.entries(result?.neuralNetworks ?? {});
+  const interfaceStats = [
+    {
+      icon: Shield,
+      label: 'Status',
+      value:
+        backendStatus === 'connected'
+          ? 'Synced'
+          : backendStatus === 'checking'
+            ? 'Checking'
+            : 'Offline',
+      detail: statusMeta.detail
+    },
+    {
+      icon: Database,
+      label: 'Formats',
+      value: 'IMG / GIF / VID',
+      detail: `Up to ${MAX_UPLOAD_MB}MB`
+    },
+    {
+      icon: Cpu,
+      label: 'Engine',
+      value: 'Ensemble',
+      detail: 'Model + forensic checks'
+    }
+  ];
 
   return (
     <div className="app-shell">
-      <div className="ambient ambient--one" />
-      <div className="ambient ambient--two" />
-      <div className="ambient ambient--three" />
+      <div className="background-grid" />
+      <div className="background-glow background-glow--one" />
+      <div className="background-glow background-glow--two" />
 
       <main className="app-frame">
         <header className="topbar reveal reveal--1">
@@ -413,8 +438,8 @@ export default function DeepfakeDetector() {
               <Shield />
             </div>
             <div>
-              <p className="section-tag">Authenticity intelligence</p>
-              <h1 className="brand-title">SignalScope</h1>
+              <p className="section-tag">Media authenticity</p>
+              <h1 className="brand-title">Trace</h1>
             </div>
           </div>
 
@@ -441,56 +466,63 @@ export default function DeepfakeDetector() {
           </div>
         </header>
 
-        <section className="hero-grid">
-          <div className="panel panel--dark hero-copy reveal reveal--2">
-            <p className="section-tag">Upload once. Review fast.</p>
-            <h2>Spot AI-generated or edited media before it spreads.</h2>
+        <section className="hero-layout">
+          <section className="panel panel--dark hero-panel reveal reveal--2">
+            <p className="section-tag">Deepfake detector</p>
+            <h2>Analyze media for manipulation signals.</h2>
             <p className="hero-lead">
-              The detector logic stays intact, but the experience now reads like a
-              clean review desk instead of a noisy effects demo. Upload an image,
-              GIF, or video, then scan the verdict, confidence, and supporting
-              evidence in one pass.
+              Upload an image, GIF, or short video. Run the scan and review the
+              verdict, confidence, and supporting evidence in one place.
             </p>
 
             <div className="hero-chip-row">
               <span className="hero-chip">
                 <Upload size={14} />
-                Images, GIFs, and video
+                Image / GIF / Video
               </span>
               <span className="hero-chip">
                 <Activity size={14} />
-                Live backend status
+                Live API status
               </span>
               <span className="hero-chip">
                 <Lock size={14} />
-                {MAX_UPLOAD_MB}MB secure upload cap
+                {MAX_UPLOAD_MB}MB upload limit
               </span>
             </div>
 
             <div className="hero-stat-grid">
-              <article className="stat-card">
-                <span className="stat-value">3</span>
-                <span className="stat-label">Verdict types</span>
-                <p>AI generated, edited original, or likely authentic.</p>
-              </article>
-              <article className="stat-card">
-                <span className="stat-value">GIF</span>
-                <span className="stat-label">Frame review</span>
-                <p>Animated uploads can return frame-level manipulation scores.</p>
-              </article>
-              <article className="stat-card">
-                <span className="stat-value">Live</span>
-                <span className="stat-label">Status checks</span>
-                <p>The backend heartbeat stays visible before you upload anything.</p>
-              </article>
-            </div>
-          </div>
+              {interfaceStats.map((item) => {
+                const Icon = item.icon;
 
-          <div className="panel panel--light upload-panel reveal reveal--3">
+                return (
+                  <article key={item.label} className="hero-stat-card">
+                    <div className="hero-stat-card__icon">
+                      <Icon size={16} />
+                    </div>
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                    <p>{item.detail}</p>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="hero-flow">
+              {WORKFLOW_STEPS.map((item) => (
+                <article key={item.step} className="hero-flow__item">
+                  <span>{item.step}</span>
+                  <strong>{item.title}</strong>
+                  <p>{item.description}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="panel panel--light upload-panel reveal reveal--3">
             <div className="panel-head">
               <div>
                 <p className="section-tag section-tag--ink">New scan</p>
-                <h2>Drop media into the review desk</h2>
+                <h3>Start with a file</h3>
               </div>
 
               {file ? (
@@ -500,13 +532,19 @@ export default function DeepfakeDetector() {
               ) : null}
             </div>
 
+            <div className="upload-band">
+              <span>Select</span>
+              <span>Preview</span>
+              <span>Run scan</span>
+            </div>
+
             <label className={`dropzone ${preview ? 'dropzone--compact' : ''}`}>
               <div className="dropzone-icon">
                 <Upload />
               </div>
-              <h3>Choose image, GIF, or video</h3>
-              <p>Supported formats: PNG, JPG, JPEG, GIF, MP4, MOV, AVI</p>
-              <span>Maximum upload size: {MAX_UPLOAD_MB}MB</span>
+              <h3>Select image, GIF, or video</h3>
+              <p>PNG, JPG, JPEG, GIF, MP4, MOV, AVI</p>
+              <span>Up to {MAX_UPLOAD_MB}MB</span>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -521,7 +559,7 @@ export default function DeepfakeDetector() {
               <div className="asset-card">
                 <div className="asset-card__head">
                   <div className="asset-icon">
-                    {fileMeta ? <fileMeta.icon size={18} /> : <ImageIcon size={18} />}
+                    <FileMetaIcon size={18} />
                   </div>
                   <div className="asset-meta">
                     <strong>{file.name}</strong>
@@ -550,7 +588,7 @@ export default function DeepfakeDetector() {
                   </div>
                   <div>
                     <p className="analysis-kicker">Live analysis</p>
-                    <h3>Running authenticity checks</h3>
+                    <h3>Running checks</h3>
                     <p>{currentStep}</p>
                   </div>
                 </div>
@@ -572,13 +610,13 @@ export default function DeepfakeDetector() {
                     const isActive = progress >= threshold;
 
                     return (
-                      <div
+                      <article
                         key={stage}
                         className={`analysis-stage ${isActive ? 'is-active' : ''}`}
                       >
                         <span>{stage}</span>
                         <strong>{isActive ? 'Ready' : 'Pending'}</strong>
-                      </div>
+                      </article>
                     );
                   })}
                 </div>
@@ -593,13 +631,13 @@ export default function DeepfakeDetector() {
                   disabled={backendStatus !== 'connected'}
                   className="primary-button"
                 >
-                  Start authenticity scan
+                  Run scan
                   <ArrowRight size={18} />
                 </button>
 
                 <p className="upload-caption">
                   {backendStatus === 'connected'
-                    ? 'Your file stays local until you press the scan button.'
+                    ? 'The file is uploaded only after you start the scan.'
                     : 'Reconnect the backend before starting a scan.'}
                 </p>
               </>
@@ -610,36 +648,26 @@ export default function DeepfakeDetector() {
                 Current API target: <span>{API_BASE_URL}</span>
               </p>
             ) : null}
-          </div>
-        </section>
-
-        <section className="capability-grid reveal reveal--4">
-          {CAPABILITY_CARDS.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <article key={item.title} className="capability-card">
-                <div className="capability-card__icon">
-                  <Icon size={20} />
-                </div>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </article>
-            );
-          })}
+          </section>
         </section>
 
         {result ? (
           <>
-            <section className={`result-hero tone-${tone.key} reveal reveal--5`}>
-              <div className="result-badge">
+            <section className={`result-summary tone-${tone.key} reveal reveal--4`}>
+              <div className="result-summary__badge">
                 <ToneIcon size={34} />
               </div>
 
-              <div className="result-copy">
+              <div className="result-summary__copy">
                 <p className="section-tag section-tag--soft">Latest verdict</p>
                 <h2>{tone.title}</h2>
                 <p>{result.summary || tone.narrative}</p>
+                <div className="result-flags">
+                  <span className="result-flag">{formatManipulationType(resultType)}</span>
+                  <span className="result-flag">
+                    Confidence {formatPercent(result.confidence)}%
+                  </span>
+                </div>
               </div>
 
               <div className="result-metrics">
@@ -679,8 +707,8 @@ export default function DeepfakeDetector() {
               </div>
             </section>
 
-            <section className="results-layout reveal reveal--6">
-              <div className="results-main">
+            <section className="result-grid reveal reveal--5">
+              <div className="result-column">
                 {result.reasons?.length ? (
                   <section className="panel panel--soft">
                     <div className="panel-heading-stack">
@@ -725,7 +753,7 @@ export default function DeepfakeDetector() {
                 ) : null}
               </div>
 
-              <div className="results-side">
+              <div className="result-column">
                 {signalEntries.length ? (
                   <section className="panel panel--dark">
                     <div className="panel-heading-stack">
@@ -798,47 +826,53 @@ export default function DeepfakeDetector() {
               </div>
             </section>
 
-            <button type="button" className="secondary-button reveal reveal--6" onClick={resetApp}>
+            <button
+              type="button"
+              className="secondary-button reveal reveal--6"
+              onClick={resetApp}
+            >
               Analyze another file
             </button>
           </>
         ) : (
-          <section className="workflow-grid reveal reveal--5">
+          <section className="overview-grid reveal reveal--4">
             <section className="panel panel--soft">
               <div className="panel-heading-stack">
-                <p className="section-tag section-tag--ink">Review flow</p>
-                <h2>Built for quick moderation and trust checks.</h2>
+                <p className="section-tag section-tag--ink">What you'll get</p>
+                <h3>Output built for quick review.</h3>
               </div>
 
-              <div className="workflow-list">
-                {WORKFLOW_STEPS.map((item) => (
-                  <article key={item.step} className="workflow-item">
-                    <span className="workflow-step">{item.step}</span>
-                    <div>
-                      <h3>{item.title}</h3>
+              <div className="capability-grid">
+                {CAPABILITY_CARDS.map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <article key={item.title} className="capability-card">
+                      <div className="capability-card__icon">
+                        <Icon size={18} />
+                      </div>
+                      <h4>{item.title}</h4>
                       <p>{item.description}</p>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             </section>
 
-            <section className="panel panel--dark">
+            <section className="panel panel--dark utility-panel">
               <div className="panel-heading-stack">
                 <p className="section-tag">Connection</p>
-                <h2>{statusMeta.label}</h2>
+                <h3>{statusMeta.label}</h3>
               </div>
 
-              <p className="supporting-copy">
-                Uploads are sent only when you start a scan. Current backend endpoint:
-              </p>
+              <p className="supporting-copy">Current backend endpoint</p>
               <p className="endpoint-pill">{API_BASE_URL}</p>
 
               <div className="utility-note">
                 <BarChart3 size={18} />
                 <p>
-                  Results combine detector confidence, manipulation score, and optional
-                  breakdowns from frame and model-level analysis.
+                  Confidence, risk level, model outputs, and optional frame analysis
+                  are shown after each scan.
                 </p>
               </div>
             </section>
@@ -848,8 +882,8 @@ export default function DeepfakeDetector() {
         <footer className="footer-note reveal reveal--6">
           <Lock size={16} />
           <p>
-            Media authenticity review using model signals, artifact checks, and
-            temporal analysis. Backend endpoint: <span>{API_BASE_URL}</span>
+            Authenticity review for images, GIFs, and short videos. Backend endpoint:{' '}
+            <span>{API_BASE_URL}</span>
           </p>
         </footer>
       </main>
